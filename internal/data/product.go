@@ -1,4 +1,4 @@
-package shop
+package data
 
 import "github.com/google/uuid"
 

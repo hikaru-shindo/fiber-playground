@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/hikaru-shindo/fiber-playground/internal/shop"
 	"log"
 	"os"
 	"os/signal"
@@ -11,7 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/hikaru-shindo/fiber-playground/internal/handler"
 	"github.com/hikaru-shindo/fiber-playground/internal/server"
+	"github.com/hikaru-shindo/fiber-playground/internal/store"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -44,9 +45,10 @@ func main() {
 
 	server := server.New()
 
-	productStore := shop.NewInMemoryProductStore()
+	productStore := store.NewInMemoryProductStore()
 
-	server.RegisterDefaultRoutes(productStore)
+	handler := handler.NewHandler(productStore)
+	handler.Register(server)
 
 	// Create a done channel to signal when the shutdown is complete
 	done := make(chan bool, 1)

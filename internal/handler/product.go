@@ -1,14 +1,18 @@
-package shop
+package handler
 
 import (
 	ctx "context"
 	"errors"
+
+	"github.com/hikaru-shindo/fiber-playground/internal/data"
+	"github.com/hikaru-shindo/fiber-playground/internal/store"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/google/uuid"
 )
 
-func (handler *Handler) getAllProducts(context *fiber.Ctx) error {
+func (handler *Handler) Products(context *fiber.Ctx) error {
 	products, err := handler.productStore.FindAll(ctx.Background())
 
 	if err != nil {
@@ -18,9 +22,27 @@ func (handler *Handler) getAllProducts(context *fiber.Ctx) error {
 	return context.JSON(products)
 }
 
-func (handler *Handler) createProduct(context *fiber.Ctx) error {
+func (handler *Handler) GetProduct(context *fiber.Ctx) error {
+	productId, err := uuid.Parse(context.Params("id"))
+
+	if err != nil {
+		return err
+	}
+
+	product, err := handler.productStore.FindById(ctx.Background(), productId)
+
+	if err != nil && !errors.Is(err, store.ErrProductDoesNotExist) {
+		return err
+	} else if errors.Is(err, store.ErrProductDoesNotExist) {
+		return fiber.NewError(fiber.StatusNotFound)
+	}
+
+	return context.JSON(product)
+}
+
+func (handler *Handler) CreateProduct(context *fiber.Ctx) error {
 	context.Accepts("application/json")
-	product := new(Product)
+	product := new(data.Product)
 
 	if err := context.BodyParser(product); err != nil {
 		return err
@@ -39,7 +61,7 @@ func (handler *Handler) createProduct(context *fiber.Ctx) error {
 	return context.JSON(product)
 }
 
-func (handler *Handler) deleteProduct(context *fiber.Ctx) error {
+func (handler *Handler) DeleteProduct(context *fiber.Ctx) error {
 	productId, err := uuid.Parse(context.Params("id"))
 
 	if err != nil {
@@ -48,7 +70,7 @@ func (handler *Handler) deleteProduct(context *fiber.Ctx) error {
 
 	err = handler.productStore.Delete(ctx.Background(), productId)
 
-	if err != nil && !errors.Is(err, ErrProductDoesNotExist) {
+	if err != nil && !errors.Is(err, store.ErrProductDoesNotExist) {
 		return err
 	}
 
@@ -57,10 +79,10 @@ func (handler *Handler) deleteProduct(context *fiber.Ctx) error {
 	return nil
 }
 
-func (handler *Handler) updateProduct(context *fiber.Ctx) error {
+func (handler *Handler) UpdateProduct(context *fiber.Ctx) error {
 	context.Accepts("application/json")
 	productId, err := uuid.Parse(context.Params("id"))
-	updatedProduct := new(Product)
+	updatedProduct := new(data.Product)
 
 	if err != nil {
 		return err
@@ -72,8 +94,7 @@ func (handler *Handler) updateProduct(context *fiber.Ctx) error {
 
 	_, err = handler.productStore.FindById(ctx.Background(), productId)
 	if err != nil {
-		context.Status(fiber.StatusNotFound)
-		return nil
+		return fiber.NewError(fiber.StatusNotFound)
 	}
 
 	err = handler.productStore.Update(ctx.Background(), *updatedProduct)

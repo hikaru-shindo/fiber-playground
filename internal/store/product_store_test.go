@@ -1,8 +1,9 @@
-package shop_test
+package store_test
 
 import (
 	"context"
-	"github.com/hikaru-shindo/fiber-playground/internal/shop"
+	"github.com/hikaru-shindo/fiber-playground/internal/data"
+	"github.com/hikaru-shindo/fiber-playground/internal/store"
 	"math/rand"
 	"testing"
 
@@ -10,12 +11,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func newTestProduct() shop.Product {
-	return shop.Product{
+func newTestProduct() data.Product {
+	return data.Product{
 		Id:          uuid.New(),
 		Name:        uuid.NewString(),
 		Description: uuid.NewString(),
-		Price: shop.Price{
+		Price: data.Price{
 			Value:    rand.Int(),
 			Currency: uuid.NewString(),
 		},
@@ -25,7 +26,7 @@ func newTestProduct() shop.Product {
 func TestInMemoryProductStore_Create(t *testing.T) {
 	testProduct := newTestProduct()
 
-	sut := shop.NewInMemoryProductStore()
+	sut := store.NewInMemoryProductStore()
 	err := sut.Create(context.Background(), testProduct)
 	result, _ := sut.FindAll(context.Background())
 
@@ -39,27 +40,27 @@ func TestInMemoryProductStore_Delete(t *testing.T) {
 
 	tests := []struct {
 		name             string
-		products         []shop.Product
-		expectedProducts []shop.Product
+		products         []data.Product
+		expectedProducts []data.Product
 		expectedError    error
 	}{
 		{
 			name:             "deletes product successfully",
-			products:         []shop.Product{testProduct},
-			expectedProducts: make([]shop.Product, 0),
+			products:         []data.Product{testProduct},
+			expectedProducts: make([]data.Product, 0),
 			expectedError:    nil,
 		},
 		{
 			name:             "returns error if product does not exist",
-			products:         make([]shop.Product, 0),
-			expectedProducts: make([]shop.Product, 0),
-			expectedError:    shop.ErrProductDoesNotExist,
+			products:         make([]data.Product, 0),
+			expectedProducts: make([]data.Product, 0),
+			expectedError:    store.ErrProductDoesNotExist,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut := shop.NewInMemoryProductStore()
+			sut := store.NewInMemoryProductStore()
 
 			for _, product := range tt.products {
 				_ = sut.Create(context.Background(), product)
@@ -77,20 +78,20 @@ func TestInMemoryProductStore_Delete(t *testing.T) {
 func TestInMemoryProductStore_FindAll(t *testing.T) {
 	tests := []struct {
 		name     string
-		products []shop.Product
+		products []data.Product
 	}{
 		{
 			name:     "returns all products",
-			products: []shop.Product{newTestProduct(), newTestProduct(), newTestProduct()},
+			products: []data.Product{newTestProduct(), newTestProduct(), newTestProduct()},
 		}, {
 			name:     "returns empty list if no product exists",
-			products: make([]shop.Product, 0),
+			products: make([]data.Product, 0),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut := shop.NewInMemoryProductStore()
+			sut := store.NewInMemoryProductStore()
 
 			for _, product := range tt.products {
 				_ = sut.Create(context.Background(), product)
@@ -123,15 +124,15 @@ func TestInMemoryProductStore_FindById(t *testing.T) {
 		}, {
 			name:          "returns error if product does not exist",
 			id:            uuid.New(),
-			expectedError: shop.ErrProductDoesNotExist,
+			expectedError: store.ErrProductDoesNotExist,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut := shop.NewInMemoryProductStore()
+			sut := store.NewInMemoryProductStore()
 
-			for _, product := range []shop.Product{newTestProduct(), newTestProduct(), testProduct, newTestProduct()} {
+			for _, product := range []data.Product{newTestProduct(), newTestProduct(), testProduct, newTestProduct()} {
 				_ = sut.Create(context.Background(), product)
 			}
 
@@ -153,29 +154,29 @@ func TestInMemoryProductStore_Update(t *testing.T) {
 	testProduct := newTestProduct()
 	tests := []struct {
 		name          string
-		modify        func(*shop.Product)
+		modify        func(*data.Product)
 		expectedError error
 	}{
 		{
 			name: "updates product correctly",
-			modify: func(product *shop.Product) {
+			modify: func(product *data.Product) {
 				product.Description = uuid.NewString()
 			},
 			expectedError: nil,
 		}, {
 			name: "returns error if id changes or product does not exist",
-			modify: func(product *shop.Product) {
+			modify: func(product *data.Product) {
 				product.Id = uuid.New()
 			},
-			expectedError: shop.ErrProductDoesNotExist,
+			expectedError: store.ErrProductDoesNotExist,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut := shop.NewInMemoryProductStore()
+			sut := store.NewInMemoryProductStore()
 
-			for _, product := range []shop.Product{newTestProduct(), testProduct, newTestProduct()} {
+			for _, product := range []data.Product{newTestProduct(), testProduct, newTestProduct()} {
 				_ = sut.Create(context.Background(), product)
 			}
 

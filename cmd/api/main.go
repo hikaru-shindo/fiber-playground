@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/hikaru-shindo/fiber-playground/internal/database"
 	"log"
 	"os"
 	"os/signal"
@@ -45,7 +46,16 @@ func main() {
 
 	server := server.New()
 
-	productStore := store.NewInMemoryProductStore()
+	db, err := database.NewGormSqliteDatabase(os.Getenv("DATABASE_FILE"))
+	if err != nil {
+		panic(fmt.Sprintf("storage error: %s", err))
+	}
+
+	if err := database.GormMigrate(db); err != nil {
+		panic(fmt.Sprintf("migration error: %s", err))
+	}
+
+	productStore := store.NewGormProductStore(db)
 
 	handler := handler.NewHandler(productStore)
 	handler.Register(server)

@@ -8,6 +8,10 @@
 .env
 
 # Project build
-bin/
-build/
-tmp/
+/bin/
+/build/
+/tmp/
+
+# Database files
+/database/
+!/database/.gitkeep

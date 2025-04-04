@@ -19,7 +19,7 @@ func (handler *Handler) Products(context *fiber.Ctx) error {
 		return err
 	}
 
-	return context.JSON(products)
+	return context.JSON(newProductListResponse(products...))
 }
 
 func (handler *Handler) GetProduct(context *fiber.Ctx) error {
@@ -37,14 +37,16 @@ func (handler *Handler) GetProduct(context *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusNotFound)
 	}
 
-	return context.JSON(product)
+	return context.JSON(newProductResponse(*product))
 }
 
 func (handler *Handler) CreateProduct(context *fiber.Ctx) error {
 	context.Accepts("application/json")
+
+	request := new(productCreateRequest)
 	product := new(data.Product)
 
-	if err := context.BodyParser(product); err != nil {
+	if err := request.bind(context, product, handler.validator); err != nil {
 		return err
 	}
 
@@ -58,7 +60,7 @@ func (handler *Handler) CreateProduct(context *fiber.Ctx) error {
 
 	context.Status(fiber.StatusCreated)
 
-	return context.JSON(product)
+	return context.JSON(newProductResponse(*product))
 }
 
 func (handler *Handler) DeleteProduct(context *fiber.Ctx) error {
@@ -82,25 +84,27 @@ func (handler *Handler) DeleteProduct(context *fiber.Ctx) error {
 func (handler *Handler) UpdateProduct(context *fiber.Ctx) error {
 	context.Accepts("application/json")
 	productId, err := uuid.Parse(context.Params("id"))
-	updatedProduct := new(data.Product)
 
 	if err != nil {
 		return err
 	}
 
-	if err := context.BodyParser(updatedProduct); err != nil {
-		return err
-	}
+	request := new(productUpdateRequest)
 
-	_, err = handler.productStore.FindById(ctx.Background(), productId)
+	product, err := handler.productStore.FindById(ctx.Background(), productId)
 	if err != nil {
 		return fiber.NewError(fiber.StatusNotFound)
 	}
 
-	err = handler.productStore.Update(ctx.Background(), *updatedProduct)
+	request.populate(product)
+	if err = request.bind(context, product, handler.validator); err != nil {
+		return err
+	}
+
+	err = handler.productStore.Update(ctx.Background(), *product)
 	if err != nil {
 		return err
 	}
 
-	return context.JSON(updatedProduct)
+	return context.JSON(newProductResponse(*product))
 }

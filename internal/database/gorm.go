@@ -35,10 +35,6 @@ func GormTestSqliteDatabase(dsn string) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	if err := GormMigrate(db); err != nil {
-		return nil, err
-	}
-
 	return db, nil
 }
 

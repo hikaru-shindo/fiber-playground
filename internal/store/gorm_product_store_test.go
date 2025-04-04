@@ -2,11 +2,9 @@ package store_test
 
 import (
 	"context"
-	"github.com/gofiber/fiber/v2/log"
 	"testing"
 
 	"github.com/hikaru-shindo/fiber-playground/internal/data"
-	"github.com/hikaru-shindo/fiber-playground/internal/database"
 	"github.com/hikaru-shindo/fiber-playground/internal/store"
 
 	"github.com/google/uuid"
@@ -14,21 +12,13 @@ import (
 )
 
 func TestGormProductStore_Create(t *testing.T) {
-	t.Cleanup(func() {
-		if err := database.GormDropTestSqliteDatabase("./../../database/database_test.go"); err != nil {
-			log.Fatal(err)
-		}
-	})
-	db, err := database.GormTestSqliteDatabase("./../../database/database_test.go")
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	t.Cleanup(teardownGorm)
+	db := setupGorm()
 
 	testProduct := newTestProduct()
 
 	sut := store.NewGormProductStore(db)
-	err = sut.Create(context.Background(), testProduct)
+	err := sut.Create(context.Background(), testProduct)
 	result, _ := sut.FindAll(context.Background())
 
 	assert.Nil(t, err)
@@ -61,16 +51,8 @@ func TestGormProductStore_Delete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(func() {
-				if err := database.GormDropTestSqliteDatabase("./../../database/database_test.go"); err != nil {
-					log.Fatal(err)
-				}
-			})
-			db, err := database.GormTestSqliteDatabase("./../../database/database_test.go")
-
-			if err != nil {
-				log.Fatal(err)
-			}
+			t.Cleanup(teardownGorm)
+			db := setupGorm()
 
 			sut := store.NewGormProductStore(db)
 
@@ -78,7 +60,7 @@ func TestGormProductStore_Delete(t *testing.T) {
 				_ = sut.Create(context.Background(), product)
 			}
 
-			err = sut.Delete(context.Background(), testProduct.Id)
+			err := sut.Delete(context.Background(), testProduct.Id)
 			result, _ := sut.FindAll(context.Background())
 
 			assert.Equal(t, tt.expectedError, err)
@@ -103,16 +85,8 @@ func TestGormProductStore_FindAll(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(func() {
-				if err := database.GormDropTestSqliteDatabase("./../../database/database_test.go"); err != nil {
-					log.Fatal(err)
-				}
-			})
-			db, err := database.GormTestSqliteDatabase("./../../database/database_test.go")
-
-			if err != nil {
-				log.Fatal(err)
-			}
+			t.Cleanup(teardownGorm)
+			db := setupGorm()
 
 			sut := store.NewGormProductStore(db)
 
@@ -153,16 +127,8 @@ func TestGormProductStore_FindById(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(func() {
-				if err := database.GormDropTestSqliteDatabase("./../../database/database_test.go"); err != nil {
-					log.Fatal(err)
-				}
-			})
-			db, err := database.GormTestSqliteDatabase("./../../database/database_test.go")
-
-			if err != nil {
-				log.Fatal(err)
-			}
+			t.Cleanup(teardownGorm)
+			db := setupGorm()
 
 			sut := store.NewGormProductStore(db)
 
@@ -208,16 +174,8 @@ func TestGormProductStore_Update(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(func() {
-				if err := database.GormDropTestSqliteDatabase("./../../database/database_test.go"); err != nil {
-					log.Fatal(err)
-				}
-			})
-			db, err := database.GormTestSqliteDatabase("./../../database/database_test.go")
-
-			if err != nil {
-				log.Fatal(err)
-			}
+			t.Cleanup(teardownGorm)
+			db := setupGorm()
 
 			sut := store.NewGormProductStore(db)
 
@@ -228,7 +186,7 @@ func TestGormProductStore_Update(t *testing.T) {
 			updatedProduct := testProduct.Clone()
 			tt.modify(&updatedProduct)
 
-			err = sut.Update(context.Background(), updatedProduct)
+			err := sut.Update(context.Background(), updatedProduct)
 
 			if tt.expectedError != nil {
 				assert.Equal(t, tt.expectedError, err)

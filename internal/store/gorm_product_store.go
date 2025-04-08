@@ -47,7 +47,6 @@ func (store *gormProductStore) FindById(ctx context.Context, id uuid.UUID) (*dat
 func (store *gormProductStore) Create(ctx context.Context, product data.Product) error {
 	return store.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&product).Error; err != nil {
-			tx.Rollback()
 			return err
 		}
 

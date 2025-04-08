@@ -2,16 +2,19 @@ package data
 
 import (
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
 )
 
 type Product struct {
-	Id          uuid.UUID `gorm:"type:uuid,primarykey"`
+	bun.BaseModel `bun:"table:product"`
+
+	Id          uuid.UUID `gorm:"type:uuid,primarykey" bun:",type:uuid,pk"`
 	Name        string
 	Description string
 	Price       struct {
-		Value    int    `gorm:"column:price"`
-		Currency string `gorm:"column:currency"`
-	} `gorm:"embedded"`
+		Value    int    `gorm:"column:price" bun:"price"`
+		Currency string `gorm:"column:currency" bun:"currency"`
+	} `gorm:"embedded" bun:"embed:"`
 }
 
 func (Product) TableName() string {

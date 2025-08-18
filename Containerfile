@@ -1,4 +1,8 @@
-FROM golang:1.25.0-alpine AS build
+
+FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.25.0-alpine AS build
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /build
 
@@ -13,7 +17,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=1 GOOS=linux go build -ldflags='-s -extldflags "-static"' -o api -v ./cmd/api
+RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags='-s -extldflags "-static"' -o api -v ./cmd/api
 
 FROM scratch AS prod
 

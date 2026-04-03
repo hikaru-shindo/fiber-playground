@@ -26,7 +26,7 @@ func newTestProduct() data.Product {
 }
 
 func setupGorm() *gorm.DB {
-	db, err := database.GormTestSqliteDatabase("./../../database/database_test.go")
+	db, err := database.GormTestSqliteInMemoryDatabase()
 
 	if err != nil {
 		log.Fatal(err)
@@ -39,8 +39,15 @@ func setupGorm() *gorm.DB {
 	return db
 }
 
-func teardownGorm() {
-	if err := database.GormDropTestSqliteDatabase("./../../database/database_test.go"); err != nil {
+func teardownGorm(db *gorm.DB) func() {
+	sqliteDb, err := db.DB()
+	if err != nil {
 		log.Fatal(err)
+	}
+
+	return func() {
+		if err = sqliteDb.Close(); err != nil {
+			log.Fatal(err)
+		}
 	}
 }

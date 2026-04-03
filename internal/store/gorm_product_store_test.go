@@ -12,8 +12,8 @@ import (
 )
 
 func TestGormProductStore_Create(t *testing.T) {
-	t.Cleanup(teardownGorm)
 	db := setupGorm()
+	t.Cleanup(teardownGorm(db))
 
 	testProduct := newTestProduct()
 
@@ -51,8 +51,8 @@ func TestGormProductStore_Delete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(teardownGorm)
 			db := setupGorm()
+			t.Cleanup(teardownGorm(db))
 
 			sut := store.NewGormProductStore(db)
 
@@ -85,8 +85,8 @@ func TestGormProductStore_FindAll(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(teardownGorm)
 			db := setupGorm()
+			t.Cleanup(teardownGorm(db))
 
 			sut := store.NewGormProductStore(db)
 
@@ -127,8 +127,8 @@ func TestGormProductStore_FindById(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(teardownGorm)
 			db := setupGorm()
+			t.Cleanup(teardownGorm(db))
 
 			sut := store.NewGormProductStore(db)
 
@@ -174,8 +174,8 @@ func TestGormProductStore_Update(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Cleanup(teardownGorm)
 			db := setupGorm()
+			t.Cleanup(teardownGorm(db))
 
 			sut := store.NewGormProductStore(db)
 

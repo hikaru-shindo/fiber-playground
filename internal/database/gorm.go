@@ -2,7 +2,6 @@ package database
 
 import (
 	"github.com/hikaru-shindo/fiber-playground/internal/data"
-	"os"
 	"time"
 
 	"gorm.io/driver/sqlite"
@@ -28,21 +27,14 @@ func NewGormSqliteDatabase(dsn string) (*gorm.DB, error) {
 	return db, nil
 }
 
-func GormTestSqliteDatabase(dsn string) (*gorm.DB, error) {
-	db, err := gorm.Open(sqlite.Open(dsn))
+func GormTestSqliteInMemoryDatabase() (*gorm.DB, error) {
+	db, err := gorm.Open(sqlite.Open(":memory:?cache=shared"))
 
 	if err != nil {
 		return nil, err
 	}
 
 	return db, nil
-}
-
-func GormDropTestSqliteDatabase(dsn string) error {
-	if err := os.Remove(dsn); err != nil {
-		return err
-	}
-	return nil
 }
 
 func GormMigrate(db *gorm.DB) error {

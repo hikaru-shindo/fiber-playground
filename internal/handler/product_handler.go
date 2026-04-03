@@ -7,12 +7,12 @@ import (
 	"github.com/hikaru-shindo/fiber-playground/internal/data"
 	"github.com/hikaru-shindo/fiber-playground/internal/store"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/google/uuid"
 )
 
-func (handler *Handler) Products(context *fiber.Ctx) error {
+func (handler *Handler) Products(context fiber.Ctx) error {
 	products, err := handler.productStore.FindAll(ctx.Background())
 
 	if err != nil {
@@ -22,7 +22,7 @@ func (handler *Handler) Products(context *fiber.Ctx) error {
 	return context.JSON(newProductListResponse(products...))
 }
 
-func (handler *Handler) GetProduct(context *fiber.Ctx) error {
+func (handler *Handler) GetProduct(context fiber.Ctx) error {
 	productId, err := uuid.Parse(context.Params("id"))
 
 	if err != nil {
@@ -40,7 +40,7 @@ func (handler *Handler) GetProduct(context *fiber.Ctx) error {
 	return context.JSON(newProductResponse(*product))
 }
 
-func (handler *Handler) CreateProduct(context *fiber.Ctx) error {
+func (handler *Handler) CreateProduct(context fiber.Ctx) error {
 	context.Accepts("application/json")
 
 	request := new(productCreateRequest)
@@ -63,7 +63,7 @@ func (handler *Handler) CreateProduct(context *fiber.Ctx) error {
 	return context.JSON(newProductResponse(*product))
 }
 
-func (handler *Handler) DeleteProduct(context *fiber.Ctx) error {
+func (handler *Handler) DeleteProduct(context fiber.Ctx) error {
 	productId, err := uuid.Parse(context.Params("id"))
 
 	if err != nil {
@@ -81,7 +81,7 @@ func (handler *Handler) DeleteProduct(context *fiber.Ctx) error {
 	return nil
 }
 
-func (handler *Handler) UpdateProduct(context *fiber.Ctx) error {
+func (handler *Handler) UpdateProduct(context fiber.Ctx) error {
 	context.Accepts("application/json")
 	productId, err := uuid.Parse(context.Params("id"))
 

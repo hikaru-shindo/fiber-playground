@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/hikaru-shindo/fiber-playground/internal/data"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type productCreateRequest struct {
@@ -24,8 +24,8 @@ type productUpdateRequest struct {
 	} `json:"price"`
 }
 
-func (request *productCreateRequest) bind(context *fiber.Ctx, product *data.Product, validator *Validator) error {
-	if err := context.BodyParser(request); err != nil {
+func (request *productCreateRequest) bind(context fiber.Ctx, product *data.Product, validator *Validator) error {
+	if err := context.Bind().Body(request); err != nil {
 		return err
 	}
 
@@ -49,8 +49,8 @@ func (request *productUpdateRequest) populate(product *data.Product) {
 	request.Price.Currency = product.Price.Currency
 }
 
-func (request *productUpdateRequest) bind(context *fiber.Ctx, product *data.Product, validator *Validator) error {
-	if err := context.BodyParser(request); err != nil {
+func (request *productUpdateRequest) bind(context fiber.Ctx, product *data.Product, validator *Validator) error {
+	if err := context.Bind().Body(request); err != nil {
 		return err
 	}
 

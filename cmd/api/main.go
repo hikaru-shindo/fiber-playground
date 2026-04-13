@@ -47,7 +47,7 @@ func main() {
 	channel := make(chan os.Signal, 1)                    // Create channel to signify a signal being sent
 	signal.Notify(channel, os.Interrupt, syscall.SIGTERM) // When an interrupt or termination signal is sent, notify the channel
 
-	_ = <-channel // This blocks the main thread until an interrupt is received
+	<-channel // This blocks the main thread until an interrupt is received
 	fmt.Println("Gracefully shutting down...")
 	_ = server.Shutdown()
 

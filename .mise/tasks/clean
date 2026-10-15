@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Clean the build and test outputs"
+set -euo pipefail
+
+echo "Cleaning..."
+rm -rf bin/server
+rm -rf coverage

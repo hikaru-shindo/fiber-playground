@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#MISE description="Run the applications test suite with coverage outoput"
+set -euo pipefail
+
+echo "Testing with coverage..."
+
+mkdir -p coverage
+go test ./... -coverprofile=coverage/coverage.out
+go tool cover -func=coverage/coverage.out
+go tool cover -html=coverage/coverage.out -o coverage/coverage.html

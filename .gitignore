@@ -10,6 +10,7 @@
 # Project build
 /bin/
 /build/
+/coverage/
 /tmp/
 
 # Database files

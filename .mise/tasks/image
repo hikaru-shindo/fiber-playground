@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#MISE description="Build the applicaiton container image"
+#USAGE arg "[image]" default="localhost/fiber-playground:latest" help="Target image name and tag"
+set -euo pipefail
+
+if command -v podman >/dev/null; then
+  engine=podman
+elif command -v docker >/dev/null; then
+  engine=docker
+else
+  echo "Podman or Docker need to be installed" >&2
+  exit 1
+fi
+
+echo "Building ${usage_image} with ${engine}..."
+"${engine}" build --file Containerfile --tag "${usage_image}" .

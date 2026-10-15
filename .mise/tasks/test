@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Run the applications test suite"
+set -euo pipefail
+
+echo "Testing..."
+go test ./... -v

@@ -1,0 +1,8 @@
+[tools]
+"aqua:air-verse/air" = "1.67.4"
+go = "1.27.2"
+golangci-lint = "2.14.0"
+
+[env]
+# gorm.io/driver/sqlite uses mattn/go-sqlite3, which needs cgo
+CGO_ENABLED = "1"

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Run the application and watch for changes with air"
+#MISE raw=true
+set -euo pipefail
+
+air

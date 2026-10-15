@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Lint the application code against the corresponding rule set"
+set -euo pipefail
+
+echo "Linting..."
+golangci-lint run ./...

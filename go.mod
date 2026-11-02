@@ -3,7 +3,7 @@ module github.com/hikaru-shindo/fiber-playground
 go 1.26.0
 
 require (
-	github.com/go-playground/validator/v10 v10.30.5
+	github.com/go-playground/validator/v10 v10.30.6
 	github.com/gofiber/fiber/v3 v3.6.1
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
@@ -15,9 +15,9 @@ require (
 require (
 	github.com/andybalholm/brotli v1.2.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.15 // indirect
-	github.com/go-playground/locales v0.14.1 // indirect
-	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.16 // indirect
+	github.com/go-playground/locales v0.14.2 // indirect
+	github.com/go-playground/universal-translator v0.18.2 // indirect
 	github.com/gofiber/schema v1.8.8 // indirect
 	github.com/gofiber/utils/v2 v2.6.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
